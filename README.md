@@ -10,7 +10,7 @@ Negative control outcomes are essential for detecting and calibrating systematic
 
 ## Architecture
 
-<img width="3870" height="1378" alt="Group 1289" src="https://github.com/user-attachments/assets/b14f7aca-3451-41e2-b79c-5072d6b63e22" />
+<img width="4000" height="1510" alt="Group 1292" src="https://github.com/user-attachments/assets/7c0b9d74-3af1-4739-95c5-cb386384425c" />
 
 The system is orchestrated with [LangGraph](https://github.com/langchain-ai/langgraph) and consists of three sequential agents:
 
