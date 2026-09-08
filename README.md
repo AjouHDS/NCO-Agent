@@ -1,6 +1,6 @@
 # NCO-Agent
 
-**Efficient Selection of Negative Control Outcomes Using a Human-in-the-Loop Multi-Agent System**
+**Efficient Selection of Negative Control Outcomes via Human-in-the-Loop Multi-Agent System**
 
 NCO-Agent is a human-in-the-loop multi-agent system (MAS) that combines evidence-based knowledge with large language model (LLM)-based semantic reasoning to select **institution-specific negative control outcomes (NCOs)** for observational studies built on the OMOP Common Data Model (CDM).
 
@@ -10,7 +10,7 @@ Negative control outcomes are essential for detecting and calibrating systematic
 
 ## Architecture
 
-<img width="4000" height="1510" alt="Group 1292" src="https://github.com/user-attachments/assets/7c0b9d74-3af1-4739-95c5-cb386384425c" />
+<img width="4000" height="1510" alt="NCO-Agent architecture" src="https://github.com/user-attachments/assets/7c0b9d74-3af1-4739-95c5-cb386384425c" />
 
 The system is orchestrated with [LangGraph](https://github.com/langchain-ai/langgraph) and consists of three sequential agents:
 
@@ -24,15 +24,41 @@ By reserving review for discordant cases, the system concentrates human effort w
 
 ## Requirements
 
-- Python 3.10+
+- Python 3.10+ (required by LangChain 1.x)
 - Access to an OMOP CDM database
-- An OpenAI-compatible LLM endpoint (the reference experiments used Qwen3.6-27B (FP8))
+- An OpenAI-compatible LLM endpoint (the reference experiments used Qwen3.6-27B (FP8) served with vLLM)
 
 Install the dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
+
+---
+
+## Configuration
+
+### Database (environment variables)
+
+Create a `.env` file in the project root and set your OMOP CDM connection and table references. Replace the masked schema/database names with those of your own institution:
+
+```env
+DATABASE_HOST=
+DATABASE_DATABASE=
+DATABASE_USER=
+DATABASE_PASSWORD=
+ACHILLES_RESULTS=[YOUR_CDM].[YOUR_RESULTS_SCHEMA].[achilles_results]
+CONCEPT_TABLE=[YOUR_CDM].[YOUR_SCHEMA].[concept]
+CONCEPT_ANCESTOR_TABLE=[YOUR_CDM].[YOUR_SCHEMA].[concept_ancestor]
+CONCEPT_RELATIONSHIP_TABLE=[YOUR_CDM].[YOUR_SCHEMA].[concept_relationship]
+CONDITION_OCCURRENCE_TABLE=[YOUR_CDM].[YOUR_SCHEMA].[condition_occurrence]
+```
+
+### LLM
+
+The pipeline uses an LLM at several stages. Configure the LLM endpoint through `src/core/config`.
+
+> **Note:** The current code is written for a **vLLM** server. Support for other backends (OpenAI-compatible API and Ollama) is planned and will be added so the endpoint can be selected via configuration.
 
 ---
 
@@ -45,7 +71,7 @@ The easiest way to try the system is through the provided notebook, **`run.ipynb
    - Antidiabetics: metformin (`1503297`), sitagliptin (`1580747`)
    - Anticoagulants: warfarin (`1310149`), apixaban (`43013024`)
    - Antihypertensives: lisinopril (`1308216`), hydrochlorothiazide (`974166`)
-3. Run all cells.
+3. Run the cell.
 
 The notebook runs the multi-agent pipeline and writes the result to `final_state.json`, which contains the proposed institution-specific NCOs together with the intermediate agent state.
 
